@@ -1,0 +1,359 @@
+SHOW VARIABLES LIKE 'port'; // see the port
+DROP TABLE <name>; // remove table
+ALTER TABLE <table name> ADD <column name> DECIMAL(n,m); // Add a new column to existing table
+ALTER TABLE <table name> DROP COLUMN <column name>; // Drop avcolumn to existing table
+
+######################## (primary key must be unque)
+create a table structure (define columns and data types)
+
+CREATE TABLE test1 (
+    order_id INT PRIMARY KEY AUTO_INCREMENT,
+    type_element VARCHAR (50) DEFAULT('null'),
+    value_1 DECIMAL (6,2),
+    value_2 DECIMAL (6,2),
+    value_3 DECIMAL (6,2)
+);
+
+we can set the following options to make easy adding,
+NOT NULL - if the value for this column become null, the entry will ignore
+UNIQUE - make unique the value for this column, duplicates removed
+
+PRIMARY KEY - both NOT NULL and UNIQUE
+DEFAULT('not given') - define default value
+AUTO_INCREMENT - automatically inctrmrnt the primary key
+ex - value_1 DECIMAL (6,2) NOT NULL,
+
+
+##############################
+
+INSERT INTO <table name> VALUES(<comma seperated data>); // insert values to table,
+
+INSERT INTO <table name>(column1, column2,..) VALUES(value1, value2,..); // insert data for selected columns
+
+
+
+SELECT * FROM <table name>; // extract data from table
+
+################################################################
+UPDATE <table name>
+SET <column name> = <new values>
+WHERE <column name> = <old values>;  // update a columh values conditionaly. Can use complex expressions (OR, AND, >, <, ect)
+
+ex - 
+UPDATE test1
+SET column1 = 'ishara', column2 = 24
+WHERE column1 = 'disnaka' AND column2 = 28;
+
+If we not used WHERE all rows will update
+
+DELEATE FROM <table name>
+WHERE column = <value> // delete rows, WHERE is optional(all row will delete if did not used)
+
+##################################################################
+
+################# QUERIES ####################
+SELECT * FROM <tabele name>; // select all
+SELECT <column name1>, <column name1>,FROM <tabele name>; // tabelname.column also same
+
+SELECT * FROM <tabele name> ORDER BY <column name1>,<column name2>, DESC LIMIT <n>; // order by this along with this columns.
+
+
+SELECT * FROM <tabele name> LIMIT <n> WHERE <condition>; // take rows that meet the conditions
+
+SELECT * FROM <tabele name> LIMIT <n> WHERE <column name> IN (value1, value2, ..) AND <column2> = <value>; // take rows that <coulmn> contain the values in the given list
+
+!!!!!!!!!!!!!!!!!!! WHERE and ORDER BY will not works together!!!!
+
+-- -> comments
+<  -> less than
+>  -> grater than
+<= -> less than or equal
+>= -> grater than or equal
+=  -> equal
+<> -> not equal
+AND-> and
+OR -> or
+
+Functions
+CONUT(<column>) FROM <table> WHERE <condition>
+SUM(<column>) FROM <table> WHERE <condition>
+AVG(<column>) FROM <table> WHERE <condition>
+
+LIKE '%pattern'= search by end with pattern '_' -match any character
+
+SELECT <expresiion> UNION SELECT <expression>; // will give union of 2 column in different tabeles(number of columns mut same)
+
+LIMIT <column> OFFSET <number of records to skip>;
+
+SELECT CONCAT(first_name, last_name) AS full_name
+FROM employees; // CONCAT will concatenate the text columns
+
+SELECT title
+FROM comics
+WHERE title LIKE 'The Avengers%'; // The % symbol can replace any number of characters (one, multiple or none) in a string to create patterns.
+
+%  - wild card for any number of characters including 0
+_  - wild card for one character
+
+Patterns are case-sensitive. 
+LOWER() and UPPER() commands are used to convert strings to lower or uppercase.
+eg-
+/*
+Converts strings in the 
+title field to uppercase
+*/
+SELECT UPPER(title)
+FROM movies;
+
+/*
+Shows if the records meet 
+or don’t meet the condition
+true (t) or false (f)
+*/
+SELECT year, year > 2000 AS result
+FROM movies;
+
+/*
+Filtering query that extracts
+only the records that make
+the condition true
+*/
+SELECT title
+FROM movies
+WHERE year > 2000;
+
+GROUP BY puts data with the same values into the same category
+
+HAVING allows you to filter data that has been grouped.
+eg - 
+SELECT genre, AVG(budget)
+FROM movies
+GROUP BY genre
+HAVING AVG(budget) > 50;
+// this will select genre and average budget from movies as grouped by genre, then filter the grouped data by average budget, will result groups that having average budget grater than 50.( usage of as command will not affect to HAVING anyway, need to use original agregation)
+
+/*checking for combination 
+duplicates of id and name values */
+SELECT id, name
+FROM employees
+GROUP BY id, name
+HAVING COUNT(id) > 1;
+
+Duplicated data can significantly impact the quality and accuracy of your analysis. Use DISTINCT to eliminate duplicate values, it will return the values having unique values for chosed field
+eg -
+/* DISTINCT is used before 
+the field we want to extract */
+SELECT DISTINCT name
+FROM employees;
+
+NULL is used to indicate that a data value is missing and does not exist in the database. NULL values are not shown in result tables.
+You can check if your data contains missing values. Use IS NULL in combination with WHERE to find missing values
+eg -
+SELECT * 
+FROM movies 
+WHERE genre IS NULL
+// check the entries with null entries for all fields
+Similarly, you can extract non-null values using IS NOT NULL. This will filter null values out.
+
+To recap:
+
+ - A SELECT statement is used to select data from a table.
+
+ - You can use the ORDER BY clause to order the results of the query by a specified column or columns.
+
+ - The LIMIT keyword allows you to select only a subset of the data, by specifying the start index and the number of rows with OFFSET.
+
+The CONCAT function allows you to combine text from multiple columns into one.
+eg-
+SELECT CONCAT(firstname, lastname) AS name
+FROM Customers; 
+
+SELECT CONCAT(firstname, ' ', lastname, 'ishara') AS name
+FROM Customers;
+
+The SUBSTRING function allows you to extract part of the text in a column.It takes the starting position and the number of characters we want to extract.
+For example, let's take the first 3 characters of the firstname: 
+SELECT SUBSTRING(firstname, 1, 3) 
+FROM Customers ;
+//in this starting possition is 1 not 0
+
+The REPLACE function replaces all occurrences of the given string with another one.For example, let's replace New York with NY in the city column:
+SELECT firstname, lastname, REPLACE(city, 'New York', 'NY') 
+FROM Customers ;
+
+We can combine multiple functions into a single query.For example, let's create a name column that has the first letter of the firstname, followed by a dot and the lastname in all uppercase:
+SELECT CONCAT(
+    SUBSTRING(firstname, 1, 1), 
+    '. ', 
+    UPPER(lastname)) AS name
+FROM Customers 
+
+ - CONCAT is used to combine multiple strings into one column.
+
+ - LOWER and UPPER convert the text to lowercase and uppercase
+
+ - SUBSTRING is used to extract a part of the text. 
+
+ - REPLACE is used to replace one value with another in the text. 
+
+
+SQL supports mathematical operators, which can be used on columns and values.SQL also provides a number of aggregation functions:
+
+ MIN/MAX to get the lowest/highest value of a column, 
+
+ AVG to get the average value, 
+
+eg -
+COUNT to get the number of records.
+SELECT nickname, MAX(score) AS best
+FROM Scores
+GROUP BY nickname
+ORDER BY MAX(score) DESC
+
+We want to set the category columns value to 'Senior', in case the age value is greater than 65, 'Adult' in case it's in the range of 25 to 64, and 'Youth', if it's under 25.This is done using the CASE statement.
+SELECT firstname, lastname,  
+CASE
+  WHEN age >= 65 THEN 'Senior'
+  WHEN age >= 25 AND age < 65 THEN 'Adult'
+  ELSE 'Youth'
+END AS category
+FROM Customers 
+
+/* 
+ - The conditions are set in WHEN clauses.
+
+ - The first WHEN clause that satisfies the condition is set as the value.
+
+ - The CASE statement should close with the END keyword. 
+*/ 
+
+
+SELECT firstname, lastname, salary
+CASE
+WHEN salary >= 0 AND salary <= 1500 THEN salary * 0.1
+WHEN salary >= 1501 AND salary <= 2000 THEN salary * 0.2
+ELSE salary*0.3
+END as tax
+FROM Employees
+ORDER BY lastname ASC
+
+
+CREATE TABLE Customers (
+  id int NOT NULL AUTO_INCREMENT,
+  firstname varchar(255),
+  lastname varchar(255)
+);
+
+CREATE TABLE PhoneNumbers (
+  id int NOT NULL AUTO_INCREMENT,
+  customer_id int NOT NULL,
+  number varchar(55),
+  type varchar(55),
+  PRIMARY KEY (id),
+  FOREIGN KEY (customer_id) REFERENCES Customers(id)
+);
+
+inserting 
+
+INSERT INTO Customers (firstname, lastname, city, age, id)
+VALUES 
+('demo', 'demo', 'Paris', 52, 10),
+('test', 'test', 'London', 21, 11);  
+
+add  column 
+
+ALTER TABLE Customers AUTO_INCREMENT=555 // value to start incrimenting
+The identity column can be created using the AUTO_INCREMENT keyword, defined next to the column, when creating the table.
+
+
+The UNIQUE constraint ensures that all values in a column are different.A PRIMARY KEY constraint automatically has a UNIQUE constraint.
+
+ALTER TABLE Customers
+ADD UNIQUE (lastname) <data type>;
+
+Now when we try to insert a Customer with a lastname that is already present in the table, we will get an error:
+
+NULL values are ignored by UNIQUE, meaning you can have multiple NULL values in a UNIQUE column.
+
+Summary
+
+The Primary key uniquely identifies each record of a table. It is usually set as an auto increment integer.
+
+Foreign keys are used to create relationships between tables. They refer to the primary key in other tables.
+
+A table can have multiple foreign keys, but only one single primary key.
+
+The UNIQUE constraint is used to make values in a column unique.
+
+SELECT firstname, lastname, city, number, type
+FROM Customers JOIN PhoneNumbers
+ON PhoneNumbers.customer_id =Customers.id;
+
+
+
+left join (alas been used)
+
+SELECT C.firstname, C.lastname, C.city, PN.number, PN.type
+FROM Customers AS C LEFT JOIN PhoneNumbers AS PN
+ON C.id = PN.customer_id
+
+// remove nulls to be 0
+SELECT Authors.name, COALESCE(COUNT(Books.name), 0) AS books
+FROM Authors 
+LEFT JOIN Books ON Authors.id = Books.author_id 
+GROUP BY Authors.id, Authors.name 
+ORDER BY books DESC;
+
+
+ 
+SELECT Authors.name, COUNT(Books.id) AS books 
+FROM Authors LEFT JOIN Books 
+ON Authors.id = Books.author_id 
+GROUP BY Authors.name 
+ORDER BY books DESC;
+
+The UNION operator is used to combine the result-sets of two or more SELECT statements.
+
+SELECT firstname, lastname, age FROM Customers
+UNION
+SELECT firstname, lastname, age FROM Contacts
+
+All SELECT statements within the UNION must have the same number of columns. The columns must also have the same data types. Also, the columns in each SELECT statement must be in the same order.
+
+UNION removes the duplicate records.
+
+UNION ALL is similar to UNION, but does not remove the duplicates:
+
+Remember, the SELECT statements need to have the same columns for the UNION to work. In case one of the tables has extra columns that we need to select, we can simply add them to the second select as NULL:
+
+SELECT firstname, lastname, age, city FROM Customers
+UNION
+SELECT firstname, lastname, age, NULL FROM Contacts
+
+We can also use other constant values for the extra columns. Just remember, that the value has to have the same data type as the column of the first table.
+
+
+use conditions
+
+SELECT firstname, lastname, age FROM Customers
+WHERE age > 30
+UNION
+SELECT firstname, lastname, age FROM Contacts
+WHERE age < 25
+
+
+############## Nesting queries ################
+
+
+SELECT AVG(count) FROM 
+(SELECT C.id, COUNT(PN.number) AS count
+FROM Customers AS C LEFT JOIN PhoneNumbers AS PN
+ON C.id = PN.customer_id
+GROUP BY C.id) AS Numbers
+
+
+We aliased the query as 'Numbers' and selected the average value of the count column from it.
+
+By enclosing a SELECT query in parentheses, we are able to give it a name and use it just like a table.
+
+It is also important to give the custom columns name aliases, so you can select them.in this case we used "count"
