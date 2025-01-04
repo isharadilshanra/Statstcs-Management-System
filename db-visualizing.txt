@@ -1,0 +1,14 @@
+Microsoft Power BI
+
+Seamless integration with other Microsoft products.
+Powerful data analysis and visualization tools.
+Supports real-time data streaming.
+Comprehensive reporting capabilities.
+
+Requires Power BI Pro or Premium for advanced features and sharing.
+
+Features
+
+Real-Time Dashboards: Connect to real-time data sources and update dashboards accordingly.
+Report Generation: Create and schedule detailed reports.
+Custom Visuals and Filters: Extensive library of visuals and ability to create custom filters
